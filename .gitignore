@@ -1,0 +1,12 @@
+﻿################################################################################
+# この .gitignore ファイルは Microsoft(R) Visual Studio によって自動的に作成されました。
+################################################################################
+
+/.vs/ASPT/v15/ipch/AutoPCH
+/.vs/ASPT/v15/Browse.VC.opendb
+/.vs/ASPT/v15/Browse.VC.db
+/.vs/slnx.sqlite
+/www
+/x64/Release
+/資料
+/aspt.VC.db
