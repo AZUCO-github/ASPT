@@ -9,6 +9,9 @@
 
 //extern	unsigned long	crc32(unsigned char *,unsigned long);
 
+unsigned long	physical_disk_set_sector_size(unsigned long);
+
+
 unsigned long	physical_disk_number_max=0;
 unsigned long	HDD_SECTOR_SIZE	=HDD_SECTOR_SIZE_0512;
 
@@ -29,38 +32,42 @@ unsigned char	partition_type_guid_storagepool[16]			={0x8f,0xaf,0x5c,0xe7,0x80,0
 //unsigned char	partition_guid_gpt[16]						={0xc2,0xa2,0xe7,0xdf,0x11,0xe3,0xe2,0x11,0xbe,0x9e,0x50,0x46,0x5d,0x90,0xd7,0x9d};
 
 /*
-HP-UX データパーティション 75894C1E-3AEB-11D3-B7C1-7B03A0000000 
-サービスパーティション E2A1E728-32E3-11D6-A682-7B03A0000000 
-Linux データパーティション EBD0A0A2-B9E5-4433-87C0-68B6B72699C7 
-RAIDパーティション A19D880F-05FC-4D3B-A006-743F0F84911E 
-スワップパーティション 0657FD6D-A4AB-43C4-84E5-0933C84B4F4F 
-LVMパーティション E6D6D379-F507-44C2-A23C-238F2A3DF928 
-予約済み 8DA63339-0007-60C0-C436-083AC8230908 
-FreeBSD データパーティション 516E7CB4-6ECF-11D6-8FF8-00022D09712B 
-スワップパーティション 516E7CB5-6ECF-11D6-8FF8-00022D09712B 
-UFSパーティション 516E7CB6-6ECF-11D6-8FF8-00022D09712B 
-Vinum Volume Managerパーティション 516E7CB8-6ECF-11D6-8FF8-00022D09712B 
-Mac OS X HFS (HFS+) パーティション 48465300-0000-11AA-AA11-00306543ECAC 
-Apple UFS 55465300-0000-11AA-AA11-00306543ECAC 
-ZFS 6A898CC3-1DD2-11B2-99A6-080020736631 
-Apple RAIDパーティション 52414944-0000-11AA-AA11-00306543ECAC 
-Apple RAIDパーティション、オフライン 52414944-5F4F-11AA-AA11-00306543ECAC 
-Appleブートパーティション 426F6F74-0000-11AA-AA11-00306543ECAC 
-Appleラベル 4C616265-6C00-11AA-AA11-00306543ECAC 
-Apple TVリカバリパーティション 5265636F-7665-11AA-AA11-00306543ECAC 
-Solaris ブートパーティション 6A82CB45-1DD2-11B2-99A6-080020736631 
-Rootパーティション 6A85CF4D-1DD2-11B2-99A6-080020736631 
-スワップパーティション 6A87C46F-1DD2-11B2-99A6-080020736631 
-バックアップパーティション 6A8B642B-1DD2-11B2-99A6-080020736631 
-/usrパーティション 6A898CC3-1DD2-11B2-99A6-080020736631 
-/varパーティション 6A8EF2E9-1DD2-11B2-99A6-080020736631 
-/homeパーティション 6A90BA39-1DD2-11B2-99A6-080020736631 
-EFI_ALTSCTR 6A9283A5-1DD2-11B2-99A6-080020736631 
-予約済みパーティション 6A945A3B-1DD2-11B2-99A6-080020736631 
-6A9630D1-1DD2-11B2-99A6-080020736631 
-6A980767-1DD2-11B2-99A6-080020736631 
-6A96237F-1DD2-11B2-99A6-080020736631 
-6A8D2AC7-1DD2-11B2-99A6-080020736631 
+Linux データパーティション				EBD0A0A2-B9E5-4433-87C0-68B6B72699C7 
+RAIDパーティション						A19D880F-05FC-4D3B-A006-743F0F84911E 
+スワップパーティション					0657FD6D-A4AB-43C4-84E5-0933C84B4F4F 
+LVMパーティション						E6D6D379-F507-44C2-A23C-238F2A3DF928 
+予約済み								8DA63339-0007-60C0-C436-083AC8230908 
+
+HP-UX データパーティション				75894C1E-3AEB-11D3-B7C1-7B03A0000000
+サービスパーティション					E2A1E728-32E3-11D6-A682-7B03A0000000
+
+FreeBSD データパーティション			516E7CB4-6ECF-11D6-8FF8-00022D09712B
+スワップパーティション					516E7CB5-6ECF-11D6-8FF8-00022D09712B 
+UFSパーティション						516E7CB6-6ECF-11D6-8FF8-00022D09712B 
+Vinum Volume Managerパーティション		516E7CB8-6ECF-11D6-8FF8-00022D09712B 
+
+Mac OS X HFS (HFS+) パーティション		48465300-0000-11AA-AA11-00306543ECAC 
+Apple UFS								55465300-0000-11AA-AA11-00306543ECAC 
+Apple RAIDパーティション				52414944-0000-11AA-AA11-00306543ECAC 
+Apple RAIDパーティション、オフライン	52414944-5F4F-11AA-AA11-00306543ECAC 
+Appleブートパーティション				426F6F74-0000-11AA-AA11-00306543ECAC 
+Appleラベル								4C616265-6C00-11AA-AA11-00306543ECAC 
+Apple TVリカバリパーティション			5265636F-7665-11AA-AA11-00306543ECAC 
+
+ZFS										6A898CC3-1DD2-11B2-99A6-080020736631
+Solaris ブートパーティション			6A82CB45-1DD2-11B2-99A6-080020736631
+Rootパーティション						6A85CF4D-1DD2-11B2-99A6-080020736631 
+スワップパーティション					6A87C46F-1DD2-11B2-99A6-080020736631 
+バックアップパーティション				6A8B642B-1DD2-11B2-99A6-080020736631 
+/usrパーティション						6A898CC3-1DD2-11B2-99A6-080020736631 
+/varパーティション						6A8EF2E9-1DD2-11B2-99A6-080020736631 
+/homeパーティション						6A90BA39-1DD2-11B2-99A6-080020736631 
+EFI_ALTSCTR								6A9283A5-1DD2-11B2-99A6-080020736631 
+予約済みパーティション					6A945A3B-1DD2-11B2-99A6-080020736631 
+										6A9630D1-1DD2-11B2-99A6-080020736631 
+										6A980767-1DD2-11B2-99A6-080020736631 
+										6A96237F-1DD2-11B2-99A6-080020736631 
+										6A8D2AC7-1DD2-11B2-99A6-080020736631 
 */
 
 
@@ -217,6 +224,53 @@ void	physical_disk_sector_write(HANDLE hpd, ULONG64 sector, unsigned char *data,
 
 
 
+void	physical_disk_sector_export(unsigned long pdu, ULONG64 sector, unsigned long sector_length)
+{
+	HANDLE			hpd;
+	HANDLE			hbn;
+	unsigned long	sector_count;
+	unsigned long	tul1;
+	LARGE_INTEGER	tli1;
+	char			buf[HDD_SECTOR_SIZE_4096];
+
+	hpd = physical_disk_handle_open_read(pdu);
+	if (hpd == INVALID_HANDLE_VALUE) {
+		printf("invalid physical drive number ? %d \n", pdu);
+		return;
+	}
+
+	physical_disk_set_sector_size(pdu);
+
+	sprintf(buf, "PD%02d-SC%I64X.bin",pdu,sector);
+	hbn = CreateFile((LPCSTR)buf, GENERIC_WRITE, FILE_SHARE_WRITE, NULL, CREATE_ALWAYS, FILE_ATTRIBUTE_NORMAL, 0);
+	if (hbn == INVALID_HANDLE_VALUE) {
+		printf("can't create %s file\n",buf);
+		CloseHandle(hbn);
+		return;
+	}
+
+	tli1.QuadPart = sector;
+	SetFilePointerEx(hpd,tli1, 0, FILE_BEGIN);
+
+	for (sector_count = 0; sector_count < sector_length; sector_count++) {
+		ReadFile(hpd,buf, HDD_SECTOR_SIZE, &tul1, NULL);
+		WriteFile(hbn, buf, HDD_SECTOR_SIZE, &tul1, NULL);
+	}
+	CloseHandle(hpd);
+	CloseHandle(hbn);
+}
+
+void	physical_disk_sector_inport(unsigned long pdu, ULONG64 sector, unsigned long sector_length)
+{
+}
+
+
+
+
+
+
+
+
 void	physical_disk_sector_dump(unsigned long pdu,ULONG64 sector)
 {
 	HANDLE			hpd;
@@ -244,23 +298,23 @@ void	physical_disk_sector_dump(unsigned long pdu,ULONG64 sector)
 unsigned long	physical_disk_set_sector_size(unsigned long pdu)
 {
 	unsigned long	tul1;
+	unsigned char	buf[4096];
 	HANDLE			hpd;
-	struct mbr		mbr_info;
 
 	hpd=physical_disk_handle_open_read(pdu);
 			HDD_SECTOR_SIZE	=0;
 
 	if(hpd!=INVALID_HANDLE_VALUE){
-		memset(&mbr_info,0,sizeof(mbr));
-		ReadFile(hpd,&mbr_info,HDD_SECTOR_SIZE_0512,&tul1,NULL); 
-		if(mbr_info.partition_table_1.start_sector_lba!=0){
+		sprintf((char *)buf,"AZUCO");
+		ReadFile(hpd,buf,HDD_SECTOR_SIZE_0512,&tul1,NULL); 
+		if (strcmp((const char *)buf, "AZUCO") != 0) {
 			HDD_SECTOR_SIZE	=HDD_SECTOR_SIZE_0512;
 			CloseHandle(hpd);
 			goto	end_sector_check;
 		}
 
-		ReadFile(hpd,&mbr_info,HDD_SECTOR_SIZE_4096,&tul1,NULL); 
-		if(mbr_info.partition_table_1.start_sector_lba!=0){
+		ReadFile(hpd,buf,HDD_SECTOR_SIZE_4096,&tul1,NULL); 
+		if (strcmp((const char *)buf, "AZUCO") != 0) {
 			HDD_SECTOR_SIZE	=HDD_SECTOR_SIZE_4096;
 			CloseHandle(hpd);
 			goto	end_sector_check;
@@ -468,7 +522,7 @@ void	physical_disk_gpt_disp(unsigned long pdu)
 	gpt_info_1st.header_crc32 = 0;
 	cmp32_1st = crc32(0x00000000, (unsigned char *)(gpt_info_1st.signature), gpt_info_1st.header_size);
 	if (crc32_1st != cmp32_1st)
-			printf("header crc32\t\tinvalid ?\t%08X\n", cmp32_1st);
+			printf("header crc32\t\t\tinvalid ?\t%08X\n", cmp32_1st);
 	else	printf("header crc32\t\tok\n");
 
 	cmp32_1st = crc32(0x00000000, peb_1st, 0x4000);

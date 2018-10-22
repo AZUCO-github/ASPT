@@ -9,6 +9,9 @@
 extern	unsigned long	physical_disk_number_max;
 extern	unsigned long	HDD_SECTOR_SIZE;
 
+extern	void			physical_disk_sector_export(unsigned long, ULONG64, unsigned long);
+extern	void			physical_disk_sector_inport(unsigned long, ULONG64, unsigned long);
+
 extern	void			physical_disk_sector_dump(unsigned long,ULONG64);
 extern	unsigned long	physical_disk_set_sector_size(unsigned long);
 extern	void			physical_disk_number_max_get(void);
@@ -59,16 +62,24 @@ int	main(int argc,char *argv[])
 		printf("\t/h\t\t\t\t\t\tcheck Storage Pool SDBB\n");
 		printf("\n");
 
-		printf("\t/q<physical drive number>\t\t\texport SPACEDB\n");
-		printf("\t/r<physical drive number>\t\t\tinport SPACEDB (need sc config spaceport start=disabled)\n");
-		printf("\t/s<physical drive number>\t\t\texport sdbc\n");
-		printf("\t/t<physical drive number>\t\t\tinport sdbc    (need sc config spaceport start=disabled)\n");
-		printf("\t/u<physical drive number>\t\t\tclear  sdbc    (need sc config spaceport start=disabled)\n");
-		printf("\t/v\t\t\t\t\t\tundisplay SDBB 03 noname\n");
-		printf("\t/w\t\t\t\t\t\tundisplay SDBB 04 command\n");
-		printf("\t/x<physical drive number>,<sector:HEX unit>\tsector dump\n");
+		printf("\t/n<physical drive number>\t\t\texport SPACEDB full area\n");
+		printf("\t/o<physical drive number>\t\t\texport SPACEDB\n");
+		printf("\t/p<physical drive number>\t\t\tinport SPACEDB (need sc config spaceport start=disabled)\n");
+		printf("\t/q<physical drive number>\t\t\texport sdbc\n");
+		printf("\t/s<physical drive number>\t\t\tinport sdbc    (need sc config spaceport start=disabled)\n");
+		printf("\t/t<physical drive number>\t\t\tclear  sdbc    (need sc config spaceport start=disabled)\n");
+		printf("\n");
+
+		printf("\t/u\t\t\t\t\t\tundisplay SDBB 03 noname\n");
+		printf("\t/v\t\t\t\t\t\tundisplay SDBB 04 command\n");
+		printf("\t/x<physical drive number>,<sector:HEX>\t\tsector dump\n");
 		printf("\t/y<physical drive number>\t\t\tauto select HDD sector size\n");
 		printf("\t/z<sector size switch>\t\t\t\tforce select HDD sector size. 4=4096/other=512\n");
+		printf("\n");
+
+		printf("\t/r<physical drive number>,<sector:HEX>,<length:HEX>\texport sector data\n");
+		printf("\t/w<physical drive number>,<sector:HEX>,<length:HEX>\tinport sector data\n");
+
 		exit(-1);
 	}
 
@@ -195,36 +206,36 @@ int	main(int argc,char *argv[])
 
 
 
-				case	'p':
+				case	'n':
 					sscanf(&argv[tul1][2], "%d", &tul2);
 					storagepool_export_sdbfa(tul2);
 					break;
-				case	'q':
+				case	'o':
 					sscanf(&argv[tul1][2], "%d", &tul2);
 					storagepool_export_spacedb(tul2);
 					break;
-				case	'r':
+				case	'p':
 					sscanf(&argv[tul1][2], "%d", &tul2);
 					storagepool_inport_spacedb(tul2);
 					break;
-				case	's':
+				case	'q':
 					sscanf(&argv[tul1][2], "%d", &tul2);
 					storagepool_export_sdbc(tul2);
 					break;
-				case	't':
+				case	's':
 					sscanf(&argv[tul1][2], "%d", &tul2);
 					storagepool_inport_sdbc(tul2);
 					break;
-				case	'u':
+				case	't':
 					sscanf(&argv[tul1][2], "%d", &tul2);
 					storagepool_clear_sdbc(tul2);
 					break;
 
 
-				case	'v':
+				case	'u':
 					undisplay_sdbb_chain_03_name_length_zero=1;
 					break;
-				case	'w':
+				case	'v':
 					undisplay_sdbb_chain_04=1;
 					break;
 				case	'x':
@@ -246,6 +257,15 @@ int	main(int argc,char *argv[])
 						printf("Set HDD SECTOR SIZE=512\n");
 					}
 					break;
+
+				case	'r':
+					sscanf(&argv[tul1][2], "%d,%I64x,%x", &tul2, &tuq1, &tul3);
+					if (tul3 == 0)	tul3 = 1;
+					physical_disk_sector_export(tul2, tuq1, tul3);
+				case	'w':
+					sscanf(&argv[tul1][2], "%d,%I64x,%x", &tul2, &tuq1, &tul3);
+					if (tul3 == 0)	tul3 = 1;
+					physical_disk_sector_inport(tul2, tuq1, tul3);
 			}
 		}else{
 			if(fnargc==0)	fnargc=tul1;
